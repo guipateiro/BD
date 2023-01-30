@@ -1,0 +1,13 @@
+// grafo completo simples
+digraph G {
+    a -> {e f};
+    b -> {b c g};
+    c -> {g f};
+    d -> {f c b a}; 
+    e -> {d};
+    f -> {c};
+    g -> {h};
+    h -> {i};
+    i -> {g}; 
+}
+

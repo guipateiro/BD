@@ -1,0 +1,5 @@
+// grafo completo simples
+graph G {
+    a -- b -- c -- a;
+}
+

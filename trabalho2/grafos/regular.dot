@@ -1,0 +1,4 @@
+// grafo regular simples
+graph G {
+    a -- b -- c -- d -- a;
+}

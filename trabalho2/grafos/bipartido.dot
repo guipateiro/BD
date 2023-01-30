@@ -1,0 +1,7 @@
+// grafo completo simples
+graph G {
+    a -- b -- c -- d;
+    d -- a;
+    e -- f;
+}
+

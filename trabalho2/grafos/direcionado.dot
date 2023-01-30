@@ -1,0 +1,5 @@
+// grafo direcionado simples
+digraph H {
+    a -> b -> c;
+    b -> d;
+}
