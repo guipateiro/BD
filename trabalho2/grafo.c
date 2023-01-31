@@ -290,9 +290,9 @@ matriz_adjacencia(grafo g)
     // descobre o numero de vertices para aloxar a matriz
     const int tam = n_vertices(g);
     // aloca a matriz
-    int **matriz = malloc((long unsigned int)tam * sizeof(int *));
+    int **matriz = (int**)malloc((long unsigned int)tam * sizeof(int *));
     for (int i = 0; i < tam; i++)
-        matriz[i] = calloc((size_t)tam, sizeof(int));
+        matriz[i] = (int*)calloc((size_t)tam, sizeof(int));
 
     // i,j indices da matriz
     // A matriz é percorrida de forma triangular, entao seu custo real é
@@ -404,7 +404,7 @@ static char vertice_ctx_tag[] = "contexto";
 static void
 dfsR(grafo g, vertice v, vertice *vv, int *cnt)
 {
-    struct vertice_ctx *r_ctx = agbindrec(v, vertice_ctx_tag, 0, FALSE);
+    struct vertice_ctx *r_ctx = (struct vertice_ctx*)agbindrec(v, vertice_ctx_tag, 0, FALSE);
 
     r_ctx->estado = 0;
     for (aresta a = agfstedge(g, v); a != NULL; a = agnxtedge(g, a, v)) {
@@ -412,7 +412,7 @@ dfsR(grafo g, vertice v, vertice *vv, int *cnt)
         if (aghead(a) == v) {
             const vertice r = agtail(a);
             struct vertice_ctx *v_ctx =
-                agbindrec(r, vertice_ctx_tag, 0, FALSE);
+                (struct vertice_ctx*)agbindrec(r, vertice_ctx_tag, 0, FALSE);
             if (v_ctx->estado == -1) dfsR(g, r, vv, cnt);
         }
     }
@@ -425,7 +425,7 @@ dfsR(grafo g, vertice v, vertice *vv, int *cnt)
 static vertice *
 rev_posordem(grafo G)
 {
-    vertice *vv = malloc((long unsigned int)n_vertices(G) * sizeof(vertice));
+    vertice *vv = (vertice*)malloc((long unsigned int)n_vertices(G) * sizeof(vertice));
     grafo reverso = grafo_reverso(G);
     struct vertice_ctx *v_ctx;
     vertice v;
@@ -433,12 +433,12 @@ rev_posordem(grafo G)
 
     for (v = agfstnode(reverso); v != NULL; v = agnxtnode(reverso, v)) {
         v_ctx =
-            agbindrec(v, vertice_ctx_tag, sizeof(struct vertice_ctx), FALSE);
+            (struct vertice_ctx*)agbindrec(v, vertice_ctx_tag, sizeof(struct vertice_ctx), FALSE);
         v_ctx->estado = -1;
         v_ctx->componente = 0;
     }
     for (v = agfstnode(reverso); v != NULL; v = agnxtnode(reverso, v)) {
-        v_ctx = agbindrec(v, vertice_ctx_tag, 0, FALSE);
+        v_ctx = (struct vertice_ctx*)agbindrec(v, vertice_ctx_tag, 0, FALSE);
         if (v_ctx->estado == -1) dfsR(reverso, v, vv, &cnt);
     }
     for (int i = 0; i < cnt; i++) {
@@ -457,8 +457,8 @@ rev_posordem(grafo G)
 static void
 _decompoe(grafo g, vertice r)
 {
-    struct vertice_ctx *r_ctx = agbindrec(r, vertice_ctx_tag, 0, FALSE);
-    struct grafo_ctx *g_ctx = agbindrec(g, grafo_ctx_tag, 0, FALSE);
+    struct vertice_ctx *r_ctx = (struct vertice_ctx*)agbindrec(r, vertice_ctx_tag, 0, FALSE);
+    struct grafo_ctx *g_ctx = (struct grafo_ctx*)agbindrec(g, grafo_ctx_tag, 0, FALSE);
 
     r_ctx->estado = 1;
     for (aresta a = agfstedge(g, r); a != NULL; a = agnxtedge(g, a, r)) {
@@ -466,7 +466,7 @@ _decompoe(grafo g, vertice r)
         if (agtail(a) == r) {
             const vertice v = aghead(a);
             struct vertice_ctx *v_ctx =
-                agbindrec(v, vertice_ctx_tag, 0, FALSE);
+                (struct vertice_ctx*)agbindrec(v, vertice_ctx_tag, 0, FALSE);
             if (v_ctx->estado == 0) _decompoe(g, v);
         }
     }
@@ -486,18 +486,18 @@ decompoe(grafo g)
 
     for (v = agfstnode(g); v != NULL; v = agnxtnode(g, v)) {
         v_ctx =
-            agbindrec(v, vertice_ctx_tag, sizeof(struct vertice_ctx), FALSE);
+            (struct vertice_ctx*)agbindrec(v, vertice_ctx_tag, sizeof(struct vertice_ctx), FALSE);
         v_ctx->estado = 0;
         v_ctx->componente = 0;
     }
 
-    g_ctx = agbindrec(g, grafo_ctx_tag, sizeof(struct grafo_ctx), TRUE);
+    g_ctx = (struct grafo_ctx*)agbindrec(g, grafo_ctx_tag, sizeof(struct grafo_ctx), TRUE);
     g_ctx->componentes = 0;
 
     L = rev_posordem(g);
     for (int i = 0, n = n_vertices(g); i < n; ++i) {
         v = L[i];
-        v_ctx = agbindrec(v, vertice_ctx_tag, 0, FALSE);
+        v_ctx = (struct vertice_ctx*)agbindrec(v, vertice_ctx_tag, 0, FALSE);
         if (v_ctx->estado == 0) {
             ++g_ctx->componentes;
             _decompoe(g, v);
@@ -517,9 +517,9 @@ decompoe(grafo g)
         for (vertice s = agfstnode(g); s != NULL; s = agnxtnode(g,s)){
             
             struct vertice_ctx *s_ctx =
-                    agbindrec(s, vertice_ctx_tag, 0, FALSE);    
+                    (struct vertice_ctx*)agbindrec(s, vertice_ctx_tag, 0, FALSE);    
             struct vertice_ctx *n_ctx =
-                    agbindrec(n, vertice_ctx_tag, 0, FALSE);
+                    (struct vertice_ctx*)agbindrec(n, vertice_ctx_tag, 0, FALSE);
             agsubnode(h[s_ctx->componente-1],s,TRUE);
             if(n_ctx->componente == s_ctx->componente){
                 if(NULL != agedge(g,s,n,NULL,FALSE)){
