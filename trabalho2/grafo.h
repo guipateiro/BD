@@ -146,7 +146,7 @@ grafo complemento(grafo g);
 //
 // devolve g
 
-grafo decompoe(grafo g);
+int decompoe(grafo g);
 
 
 #endif

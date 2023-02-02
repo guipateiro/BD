@@ -474,7 +474,7 @@ _decompoe(grafo g, vertice r)
     r_ctx->estado = 2;
 }
 
-grafo
+int
 decompoe(grafo g)
 {
     struct vertice_ctx *v_ctx;
@@ -505,8 +505,8 @@ decompoe(grafo g)
     }
 
 
-    printf("\nNº de componentes: %i\n", g_ctx->componentes);
-
+    //printf("\nNº de componentes: %i\n", g_ctx->componentes);
+	return g_ctx->componentes;
     grafo * h = (grafo*)calloc((long unsigned int)g_ctx->componentes, sizeof(grafo));
 
     for (int i = 0; i < g_ctx->componentes; i++){
@@ -543,5 +543,5 @@ decompoe(grafo g)
     printf("\nNº de componentes: %i\n", g_ctx->componentes);
     free(L);
 
-    return g;
+    return g_ctx->componentes;
 }

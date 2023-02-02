@@ -1,15 +1,15 @@
-CC = g++
+CC = g++ -g
 
 OBJS = grafo.o Data.o main.o
-EXE  = main
+EXE  = escalona
 
 CFLAGS = -Wall
 LDLIBS = -lcgraph
 
 all: $(EXE)
 
-main: $(OBJS)
-	$(CC) -o teste $(OBJS) $(CFLAGS) $(LDLIBS)
+$(EXE): $(OBJS)
+	$(CC) -o $(EXE) $(OBJS) $(CFLAGS) $(LDLIBS)
 
 Data.o: Data.cpp Data.hpp
 	$(CC) -c $< $(CFLAGS)

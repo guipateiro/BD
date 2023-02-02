@@ -4,7 +4,8 @@
 #include <stdio.h>
 #include <cstring>  
 #include <vector>
-
+#include <algorithm>
+#include <list>
 
 int main(){
 	//grafo g = le_grafo();
@@ -34,77 +35,80 @@ int main(){
 		i++;
     }  
 	int tam = i--;
-	
-	std::vector<int> carlos(50);
-	char nome[256];
-    snprintf(nome, sizeof(nome), "grafo");
-	grafo g = agopen(nome, Agdirected, nullptr);
-	for (i = 0; i < tam; i++){
+	i = 0;
+	std::list<int> controle_operacao;
+	int num = 1;
+	bool flag = 0;
+	std::cout << num << " ";
+	for(int m = 0; m < tam; m++){
+		if(flag){
+			std::cout << num++ << " ";
+			flag = 0;
+		}
+		char nome[256];
+		snprintf(nome, sizeof(nome), "grafo");
+		grafo g = agopen(nome, Agdirected, nullptr);
 		char tempstrint[128];
-		//std::cout << "'" << data[i].origem << "'" <<'\n';
-		std::sprintf(tempstrint,"%i", data[i].origem);
-  		//std::printf("n_char: '%s' \n",tempstrint);
-		agnode(g, tempstrint, TRUE);
-	}
-	for (i = 0; i < tam; i++){
-		for (int j = i; j < tam; j++){
-			if(data[i].operacao == 'R' && (data[i].dado == data[j].dado) && data[j].operacao == 'W'){
-				char tempstrint[128];
-				std::sprintf(tempstrint,"%i", data[i].origem);
-  				//std::printf("n_char: %s \n",tempstrint);
-				vertice s = agnode(g, tempstrint, FALSE);
-				std::sprintf(tempstrint,"%i", data[j].origem);
-  				//std::printf("n_char: %s \n",tempstrint);
-				vertice n = agnode(g, tempstrint, FALSE);
-				agedge(g,s,n,NULL,TRUE);
-			}
-			if(data[i].operacao == 'W' && (data[i].dado == data[j].dado) && data[j].operacao == 'R'){
-				char tempstrint[128];
-				std::sprintf(tempstrint,"%i", data[i].origem);
-  				//std::printf("n_char: %s \n",tempstrint);
-				vertice s = agnode(g, tempstrint, FALSE);
-				std::sprintf(tempstrint,"%i", data[j].origem);
-  				//std::printf("n_char: %s \n",tempstrint);
-				vertice n = agnode(g, tempstrint, FALSE);
-				agedge(g,s,n,NULL,TRUE);
-			}
-			if(data[i].operacao == 'W' && (data[i].dado == data[j].dado) && data[j].operacao == 'W'){
-				char tempstrint[128];
-				std::sprintf(tempstrint,"%i", data[i].origem);
-  				//std::printf("n_char: %s \n",tempstrint);
-				vertice s = agnode(g, tempstrint, FALSE);
-				std::sprintf(tempstrint,"%i", data[j].origem);
-  				//std::printf("n_char: %s \n",tempstrint);
-				vertice n = agnode(g, tempstrint, FALSE);
-				agedge(g,s,n,NULL,TRUE);
+		//std::cout << "'" << data[m].origem << "'" <<'\n';
+		if(data[m].operacao != 'C'){
+			controle_operacao.push_front(data[m].origem);
+			//std::cout << "colocado\n";
+			std::sprintf(tempstrint,"%i", data[m].origem);
+//agnode(g, tempstrint, TRUE);
+		}
+		else{
+			controle_operacao.remove(data[m].origem);
+			std::cout << data[m].origem;
+			if (controle_operacao.size() > 0 ){
+				std::cout << ',';
+			}else{
+				std::cout << ' ';
 			}
 		}
+		//std::cout << controle_operacao.size() << "\n";
+		if(controle_operacao.size() == 0){
+			//std::cout << "teste "<< i << m <<"\n";
+			for (; i < m; i++){
+				for (int j = i + 1; j < m; j++){
+					if(data[i].operacao == 'R' && (data[i].dado == data[j].dado) && data[j].operacao == 'W'){
+						char tempstrint[128];
+						std::sprintf(tempstrint,"%i", data[i].origem);
+						//std::printf("n_char: %s \n",tempstrint);
+						vertice s = agnode(g, tempstrint, TRUE);
+						std::sprintf(tempstrint,"%i", data[j].origem);
+						//std::printf("n_char: %s \n",tempstrint);
+						vertice n = agnode(g, tempstrint, TRUE);
+						agedge(g,s,n,NULL,TRUE);
+					}
+					if(data[i].operacao == 'W' && (data[i].dado == data[j].dado) && data[j].operacao == 'R'){
+						char tempstrint[128];
+						std::sprintf(tempstrint,"%i", data[i].origem);
+						//std::printf("n_char: %s \n",tempstrint);
+						vertice s = agnode(g, tempstrint, TRUE);
+						std::sprintf(tempstrint,"%i", data[j].origem);
+						//std::printf("n_char: %s \n",tempstrint);
+						vertice n = agnode(g, tempstrint, TRUE);
+						agedge(g,s,n,NULL,TRUE);
+					}
+					if(data[i].operacao == 'W' && (data[i].dado == data[j].dado) && data[j].operacao == 'W'){
+						char tempstrint[128];
+						std::sprintf(tempstrint,"%i", data[i].origem);
+						//std::printf("n_char: %s \n",tempstrint);
+						vertice s = agnode(g, tempstrint, TRUE);
+						std::sprintf(tempstrint,"%i", data[j].origem);
+						//std::printf("n_char: %s \n",tempstrint);
+						vertice n = agnode(g, tempstrint, TRUE);
+						agedge(g,s,n,NULL,TRUE);
+					}
+				}
+			}
+			if(n_vertices(g) == decompoe(g)){
+				std::cout <<  "NS\n";
+			}
+			else{
+				std::cout <<  "SS\n";
+			}
+		flag = 1;
+		}
 	}
-
-	//while
-	decompoe(g);
-	
-
-	//feito pelo tikara (nao deletar)
-	/*vector<vector<int>> g(MAXN);
-
-	g[a].push_back(b);
-	g[b].push_back(a);
-	g[a].remove(b);
-
-	int g[MAXV][MAXV] = {};
-
-	g[a][b] = 1;
-	g[b][a] = 1;
-
-	g[a][b] = 0;*/
-
-	/*for (i = 0; i < tam; i++){
-		std::cout << data[i].time << " " << data[i].origem << " " << data[i].operacao << " " << data[i].dado << "\n";
-	}8*/
-
-	
-	
-	//escreve_grafo(g);
-
-}
+}	
