@@ -54,7 +54,7 @@ int main(){
 			controle_operacao.push_front(data[m].origem);
 			//std::cout << "colocado\n";
 			std::sprintf(tempstrint,"%i", data[m].origem);
-//agnode(g, tempstrint, TRUE);
+			//agnode(g, tempstrint, TRUE);
 		}
 		else{
 			controle_operacao.remove(data[m].origem);
@@ -67,48 +67,43 @@ int main(){
 		}
 		//std::cout << controle_operacao.size() << "\n";
 		if(controle_operacao.size() == 0){
+			// i == inicio dos elementos nao processados 
+			// m == fim dos elementos nao processados
 			//std::cout << "teste "<< i << m <<"\n";
-			for (; i < m; i++){
-				for (int j = i + 1; j < m; j++){
-					if(data[i].operacao == 'R' && (data[i].dado == data[j].dado) && data[j].operacao == 'W'){
+			int n = i;
+			for (; n < m; n++){
+				for (int j = n + 1; j < m; j++){
+					if((data[n].dado == data[j].dado) && ((data[n].operacao == 'R' && data[j].operacao == 'W') || (data[n].operacao == 'W' && data[j].operacao == 'W') || (data[n].operacao == 'W' && data[j].operacao == 'R'))){
 						char tempstrint[128];
-						std::sprintf(tempstrint,"%i", data[i].origem);
+						std::sprintf(tempstrint,"%i", data[n].origem);
 						//std::printf("n_char: %s \n",tempstrint);
 						vertice s = agnode(g, tempstrint, TRUE);
 						std::sprintf(tempstrint,"%i", data[j].origem);
 						//std::printf("n_char: %s \n",tempstrint);
-						vertice n = agnode(g, tempstrint, TRUE);
-						agedge(g,s,n,NULL,TRUE);
-					}
-					if(data[i].operacao == 'W' && (data[i].dado == data[j].dado) && data[j].operacao == 'R'){
-						char tempstrint[128];
-						std::sprintf(tempstrint,"%i", data[i].origem);
-						//std::printf("n_char: %s \n",tempstrint);
-						vertice s = agnode(g, tempstrint, TRUE);
-						std::sprintf(tempstrint,"%i", data[j].origem);
-						//std::printf("n_char: %s \n",tempstrint);
-						vertice n = agnode(g, tempstrint, TRUE);
-						agedge(g,s,n,NULL,TRUE);
-					}
-					if(data[i].operacao == 'W' && (data[i].dado == data[j].dado) && data[j].operacao == 'W'){
-						char tempstrint[128];
-						std::sprintf(tempstrint,"%i", data[i].origem);
-						//std::printf("n_char: %s \n",tempstrint);
-						vertice s = agnode(g, tempstrint, TRUE);
-						std::sprintf(tempstrint,"%i", data[j].origem);
-						//std::printf("n_char: %s \n",tempstrint);
-						vertice n = agnode(g, tempstrint, TRUE);
-						agedge(g,s,n,NULL,TRUE);
+						vertice ns = agnode(g, tempstrint, TRUE);
+						agedge(g,s,ns,NULL,TRUE);
 					}
 				}
 			}
 			if(n_vertices(g) == decompoe(g)){
-				std::cout <<  "NS\n";
+				std::cout <<  "SS";
 			}
 			else{
-				std::cout <<  "SS\n";
+				std::cout <<  "NS";
 			}
-		flag = 1;
+
+
+			// coloque seu algoritmo aqui 
+
+			// next_permutation() google pesquisar
+
+			// termine seu codigo aqui
+			
+			std::cout << "\n";
+
+			
+			flag = 1;
+			i = m; // inicio = final
 		}
 	}
 }	
