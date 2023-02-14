@@ -37,12 +37,12 @@ int main(){
 	int tam = i--;
 	i = 0;
 	std::list<int> controle_operacao;
-//	int num = 1;
+	int num = 1;
 	bool flag = 0;
-//	std::cout << num << " ";
+	std::cout << num << " ";
 	for(int m = 0; m < tam; m++){
 		if(flag){
-//			std::cout << num++ << " ";
+			std::cout << num++ << " ";
 			flag = 0;
 		}
 		char nome[256];
@@ -58,13 +58,13 @@ int main(){
 		}
 		else{
 			controle_operacao.remove(data[m].origem);
-//			std::cout << data[m].origem;
+/*			std::cout << data[m].origem;
 			if (controle_operacao.size() > 0 ){
-//				std::cout << ',';
+				std::cout << ',';
 			}else{
-//				std::cout << ' ';
+				std::cout << ' ';
 			}
-		}
+*/		}
 		//std::cout << controle_operacao.size() << "\n";
 		if(controle_operacao.size() == 0){
 			// i == inicio dos elementos nao processados 
@@ -77,21 +77,16 @@ int main(){
 					if((data[n].dado == data[j].dado) && ((data[n].operacao == 'R' && data[j].operacao == 'W') || (data[n].operacao == 'W' && data[j].operacao == 'W') || (data[n].operacao == 'W' && data[j].operacao == 'R'))){
 						char tempstrint[128];
 						std::sprintf(tempstrint,"%i", data[n].origem);
-//						std::printf("n_char: %s \n",tempstrint);
+						//std::printf("n_char: %s \n",tempstrint);
 						vertice s = agnode(g, tempstrint, TRUE);
 						std::sprintf(tempstrint,"%i", data[j].origem);
-//						std::printf("n_char: %s \n",tempstrint);
+						//std::printf("n_char: %s \n",tempstrint);
 						vertice ns = agnode(g, tempstrint, TRUE);
 						agedge(g,s,ns,NULL,TRUE);
 					}
 				}
 			}
-			if(n_vertices(g) == decompoe(g)){
-//				std::cout <<  "SS ";
-			}
-			else{
-//				std::cout <<  "NS ";
-			}
+			
 
 
 			// *** Início de Equivalência por Imagem ***
@@ -106,6 +101,21 @@ int main(){
 			} 
 			sort(permutations.begin(), permutations.end());
 			permutations.erase(unique(permutations.begin(), permutations.end()), permutations.end());
+			//std::cout << "\n\n";
+			for (unsigned int perm_index = 0; perm_index < permutations.size(); perm_index++){
+				std::cout << permutations[perm_index];
+				if (perm_index != permutations.size()-1)
+					std::cout << ',';
+			}
+			std::cout << " ";
+
+			if(n_vertices(g) == decompoe(g)){
+				std::cout <<  "SS ";
+			}
+			else{
+				std::cout <<  "NS ";
+			}
+
 			sort(data_list.begin(), data_list.end());
 			data_list.erase(unique(data_list.begin(), data_list.end()), data_list.end());
 
@@ -130,6 +140,27 @@ int main(){
 					if (data[n].operacao == 'R'){
 						for (j = n+1; j <= m; j++){
 							if (data[j].operacao == 'W' && data[n].dado == data[j].dado && data[n].origem != data[j].origem){
+								int i_copia = 0;
+								while (copy_data[i_copia].time != data[n].time && copy_data[i_copia].time != data[j].time)
+									i_copia++;
+								if (copy_data[i_copia].time == data[j].time)
+									equivalente = false;
+							}
+							if (!equivalente)
+								break;
+						}
+					}
+					if (!equivalente)
+						break;
+				}
+
+				if (!equivalente)
+					continue;
+
+				for (n = i; n <= m; n++){
+					if (data[n].operacao == 'W'){
+						for (j = n+1; j <= m; j++){
+							if (data[j].operacao == 'R' && data[n].dado == data[j].dado && data[n].origem != data[j].origem){
 								int i_copia = 0;
 								while (copy_data[i_copia].time != data[n].time && copy_data[i_copia].time != data[j].time)
 									i_copia++;
@@ -195,7 +226,12 @@ int main(){
 */
 			} while (std::next_permutation(permutations.begin(),permutations.end()));
 
-			std::cout << "Equivalência = " << equivalente;
+			//std::cout << "Equivalência = " << equivalente;
+
+			if (equivalente)
+				std::cout << "SV";
+			else
+				std::cout << "NV";
 
 			// *** Fim de Equivalência por Imagem ***
 			
