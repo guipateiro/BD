@@ -8,85 +8,71 @@
 #include <list>
 
 int main(){
-	//grafo g = le_grafo();
-	//escreve_grafo(g);
-    Data data[300]; 
+    Data data[30000]; 
 	char line[100];
 	int i = 0;
+	//le uma linha da entrada e divide ela em tokens
     while(std::cin.getline(line,100)){
-		//std::cout << line << "\n";
-    	char *ptr = strtok (line, " ");
-		//std::cout << " Split string using strtok() function: " << std::endl;  
-    	// use while loop to check ptr is not null  
-			
+    	char *ptr = strtok (line, " ");	
 		data[i].time = std::stoi(ptr); 
-		//std::cout << data[i].time  << std::endl; // print the string token  
 		ptr = strtok (NULL, " ");
 		data[i].origem = std::stoi(ptr);  
-		//std::cout << data[i].origem  << std::endl; // print the string token  
 		ptr = strtok (NULL, " ");
 		data[i].operacao = ptr[0];  
-		//std::cout << data[i].operacao  << std::endl; // print the string token  
 		ptr = strtok (NULL, " ");
 		data[i].dado = ptr[0];   
-		//std::cout << data[i].dado  << std::endl; // print the string token  
-		
-		//std::cout << "INPUT SALVO: "<< data[i].time << " " << data[i].origem << " " << data[i].operacao << " " << data[i].dado << "\n";
 		i++;
     }  
-	int tam = i--;
-	i = 0;
+	
+	int tam = i--;  //tamanho total gerado pela entrada
+	i = 0;  		//contador
 	std::list<int> controle_operacao;
 	int num = 1;
 	bool flag = 0;
 	std::cout << num << " ";
+	//for de 0 ao tamanho de data
 	for(int m = 0; m < tam; m++){
 		if(flag){
 			std::cout << num++ << " ";
 			flag = 0;
 		}
 		char nome[256];
+		//gera um grafor com os vetices onde o nome do vertice é o nome da 'tread' da operação
 		snprintf(nome, sizeof(nome), "grafo");
 		grafo g = agopen(nome, Agdirected, nullptr);
 		char tempstrint[128];
-		//std::cout << "'" << data[m].origem << "'" <<'\n';
 		if(data[m].operacao != 'C'){
+			//empilha a 'tread' para verificar se a operação terminou
 			controle_operacao.push_front(data[m].origem);
-			//std::cout << "colocado\n";
 			std::sprintf(tempstrint,"%i", data[m].origem);
-			//agnode(g, tempstrint, TRUE);
 		}
 		else{
+			//desempilha a 'tread' para verificar se a operação terminou
 			controle_operacao.remove(data[m].origem);
-/*			std::cout << data[m].origem;
-			if (controle_operacao.size() > 0 ){
-				std::cout << ',';
-			}else{
-				std::cout << ' ';
-			}
-*/		}
-		//std::cout << controle_operacao.size() << "\n";
+		}
+		//se a pilha de 'treads' ativas é zero entao as operações terminaras e podem ser processadas
 		if(controle_operacao.size() == 0){
 			// i == inicio dos elementos nao processados 
 			// m == fim dos elementos nao processados
-			//std::cout << "teste "<< i << m <<"\n";
 			int n = i;
 			int j;
 			for (; n <= m; n++){
 				for (j = n + 1; j < m; j++){
+					// para cada 2 operações verifica se elas caem em uma das 3 regras
 					if((data[n].dado == data[j].dado) && ((data[n].operacao == 'R' && data[j].operacao == 'W') || (data[n].operacao == 'W' && data[j].operacao == 'W') || (data[n].operacao == 'W' && data[j].operacao == 'R'))){
 						char tempstrint[128];
+						//pega um vertice
 						std::sprintf(tempstrint,"%i", data[n].origem);
-						//std::printf("n_char: %s \n",tempstrint);
 						vertice s = agnode(g, tempstrint, TRUE);
+						//pega outro vertice
 						std::sprintf(tempstrint,"%i", data[j].origem);
-						//std::printf("n_char: %s \n",tempstrint);
 						vertice ns = agnode(g, tempstrint, TRUE);
+						//cria aresta 
 						agedge(g,s,ns,NULL,TRUE);
 					}
 				}
 			}
-			
+			//grafo pronto
 
 
 			// *** Início de Equivalência por Imagem ***
@@ -118,6 +104,7 @@ int main(){
 			
 
 			// Imprime a saída do primeiro teste
+			// se numero de vertices == numero de componentes, não ha ciclo no grafo
 			if(n_vertices(g) == decompoe(g)){
 				std::cout <<  "SS ";
 			}

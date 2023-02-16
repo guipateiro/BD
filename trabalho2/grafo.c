@@ -504,44 +504,5 @@ decompoe(grafo g)
         }
     }
 
-
-    //printf("\nNº de componentes: %i\n", g_ctx->componentes);
 	return g_ctx->componentes;
-    grafo * h = (grafo*)calloc((long unsigned int)g_ctx->componentes, sizeof(grafo));
-
-    for (int i = 0; i < g_ctx->componentes; i++){
-        h[i] = agsubg(g,NULL,TRUE);
-    }
-
-    for (vertice n = agfstnode(g); n != NULL; n = agnxtnode(g,n)){
-        for (vertice s = agfstnode(g); s != NULL; s = agnxtnode(g,s)){
-            
-            struct vertice_ctx *s_ctx =
-                    (struct vertice_ctx*)agbindrec(s, vertice_ctx_tag, 0, FALSE);    
-            struct vertice_ctx *n_ctx =
-                    (struct vertice_ctx*)agbindrec(n, vertice_ctx_tag, 0, FALSE);
-            agsubnode(h[s_ctx->componente-1],s,TRUE);
-            if(n_ctx->componente == s_ctx->componente){
-                if(NULL != agedge(g,s,n,NULL,FALSE)){
-                    aresta e = agedge(g,s,n,NULL,FALSE);
-                    if (aghead(e) == n){
-                        printf("\nNº do componentes: %i || %i \n", n_ctx->componente,g_ctx->componentes);        
-                        agsubedge(h[n_ctx->componente-1],agedge(g,s,n,NULL,FALSE),TRUE);
-                    }
-                    else{
-                        printf("\nNº do componentes: %i || %i \n", n_ctx->componente,g_ctx->componentes);        
-                        agsubedge(h[n_ctx->componente-1],agedge(g,n,s,NULL,FALSE),TRUE);
-                    }
-                }
-            }            
-        }
-    }
-    for (int i = 0; i < g_ctx->componentes; i++){
-        printf("Componente %i: \n", i);
-        escreve_grafo(h[i]);       
-    }
-    printf("\nNº de componentes: %i\n", g_ctx->componentes);
-    free(L);
-
-    return g_ctx->componentes;
 }
