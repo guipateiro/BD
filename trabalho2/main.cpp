@@ -156,6 +156,29 @@ int main(){
 						break;
 				}
 
+				// Se não cumpriu a regra, vamos pro próximo S'
+				if (!equivalente)
+					continue;
+
+				// Agora, inverte-se a ordem de 'R' e 'W'.
+				// Isso é equivalente a analisar se existe um 'W' antes de 'R' no S' e comparar no S, tratando S' como Ti e S como Tj
+				for (n = i; n <= m; n++){
+					if (data[n].operacao == 'R'){
+						for (j = n+1; j <= m; j++){
+							if (data[j].operacao == 'W' && data[n].dado == data[j].dado && data[n].origem != data[j].origem){
+								int i_copia = 0;
+								while (copy_data[i_copia].time != data[n].time && copy_data[i_copia].time != data[j].time)
+									i_copia++;
+								if (copy_data[i_copia].time == data[j].time)
+									equivalente = false;
+							}
+							if (!equivalente)
+								break;
+						}
+					}
+					if (!equivalente)
+						break;
+				}
 
 				// Se não cumpriu a regra, vamos pro próximo S'
 				if (!equivalente)
