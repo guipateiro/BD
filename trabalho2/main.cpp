@@ -92,23 +92,32 @@ int main(){
 			// *** Início de Equivalência por Imagem ***
 
 			// Monta lista de origens de um conflito
-			// Junta lista de dados utilizados
+			// Junta lista de dados do conflito pra uso posterior
 			std::vector<int> permutations;
 			std::vector<char> data_list;
 			for (n = i; n <= m; n++){
 				permutations.push_back(data[n].origem);
 				data_list.push_back(data[n].dado);
 			} 
+
+
+			// Ordena ambos os vetores e remove dados duplicados
 			sort(permutations.begin(), permutations.end());
 			permutations.erase(unique(permutations.begin(), permutations.end()), permutations.end());
-			//std::cout << "\n\n";
+			sort(data_list.begin(), data_list.end());
+			data_list.erase(unique(data_list.begin(), data_list.end()), data_list.end());
+
+			
+			// Imprime as origens presentes no conflito
 			for (unsigned int perm_index = 0; perm_index < permutations.size(); perm_index++){
 				std::cout << permutations[perm_index];
 				if (perm_index != permutations.size()-1)
 					std::cout << ',';
 			}
 			std::cout << " ";
+			
 
+			// Imprime a saída do primeiro teste
 			if(n_vertices(g) == decompoe(g)){
 				std::cout <<  "SS ";
 			}
@@ -116,10 +125,12 @@ int main(){
 				std::cout <<  "NS ";
 			}
 
-			sort(data_list.begin(), data_list.end());
-			data_list.erase(unique(data_list.begin(), data_list.end()), data_list.end());
 
-			// Cria permutações dos dados em copy_data
+			// Início do do-while para permutações
+			// Logo no começo, cria-se um vetor copy_data
+			// Nele, está presente S', uma cópia de S seriabilizada
+			// Em cada laço um S' diferente é criado, respeitando as permutações
+			// Como são os mesmos dados de S, todo S' cumpre a regra 1
 			int size = m-i+1;
 			Data copy_data[size];
 			bool equivalente;
@@ -135,28 +146,11 @@ int main(){
 					}
 				}
 
-				// Regra 2
-				for (n = i; n <= m; n++){
-					if (data[n].operacao == 'R'){
-						for (j = n+1; j <= m; j++){
-							if (data[j].operacao == 'W' && data[n].dado == data[j].dado && data[n].origem != data[j].origem){
-								int i_copia = 0;
-								while (copy_data[i_copia].time != data[n].time && copy_data[i_copia].time != data[j].time)
-									i_copia++;
-								if (copy_data[i_copia].time == data[j].time)
-									equivalente = false;
-							}
-							if (!equivalente)
-								break;
-						}
-					}
-					if (!equivalente)
-						break;
-				}
-
-				if (!equivalente)
-					continue;
-
+				// Regra 2: Se houver leitura, checar se há escrita prévia
+				// Para facilitar, foi implementado checando primeiro a escrita
+				// A cada escrita, checa-se se houve leitura posterior do mesmo dado
+				// Se houve, analisa-se se no vetor S' a ordem das operações permanece a mesma (escrita antes de leitura)
+				// Caso a leitura venha antes, não é equivalente por visão
 				for (n = i; n <= m; n++){
 					if (data[n].operacao == 'W'){
 						for (j = n+1; j <= m; j++){
@@ -175,13 +169,17 @@ int main(){
 						break;
 				}
 
+
+				// Se não cumpriu a regra, vamos pro próximo S'
 				if (!equivalente)
 					continue;
 				
-				// Regra 3: Fazer lista de variáveis.
-				// Achar o último write de cada variável.
-				// Ver se ele coincide com o último write da S'.
-				
+				// Regra 3: Checar se a última escrita ainda é a mesma
+				// Primeiro, roda-se o vetor de variáveis utilizadas feito previamente (data_list)
+				// Procura-se no segundo "for", de baixo pra cima, a última escrita
+				// Se não houver escrita, passa pra próxima variável
+				// Se houver escrita, roda o copy_data de baixo pra cima em busca do último write
+				// Se for a mesma transação é equivalente, caso contrário não é
 				for (unsigned int i_ele = 0; i_ele < data_list.size(); i_ele++){
 					for (n = m; n >= i; n--){
 						if (data[n].operacao == 'W' && data[n].dado == data_list[i_ele])
@@ -204,30 +202,15 @@ int main(){
 				}
 				
 
-				if (equivalente){
-					/*std::cout << "Time inicial: " << data[i].time << ", Time final: " << data[m].time << "\nO vetor:\n";
-					for (int teste = i; teste <= m; teste++){
-					std::cout << "Data = " << data[teste].time << ", " << data[teste].origem << ", " << data[teste].operacao << ", " << data[teste].dado << "\n";
-				}
-					std::cout << "É equivalente com: \n";
-					for (int teste = 0; teste < size; teste++){
-					std::cout << "Copy = " << copy_data[teste].time << ", " << copy_data[teste].origem << ", " << copy_data[teste].operacao << ", " <<  copy_data[teste].dado << "\n";
-				}*/
+				// Se cumpriu ambas as regras, paramos de analisar as permutações pois achamos um S' equivalente
+				if (equivalente)
 					break;
-				}
-/*
-				for (int teste = i; teste <= m; teste++){
-					std::cout << "Data = " << data[teste].time << ", " << data[teste].origem << ", " << data[teste].operacao << ", " << data[teste].dado << "\n";
-				}
-				for (int teste = 0; teste < size; teste++){
-					std::cout << "Copy = " << copy_data[teste].time << ", " << copy_data[teste].origem << ", " << copy_data[teste].operacao << ", " <<  copy_data[teste].dado << "\n";
-				}
-				std::cout << "\n";
-*/
+
+
 			} while (std::next_permutation(permutations.begin(),permutations.end()));
 
-			//std::cout << "Equivalência = " << equivalente;
 
+			// Imprime a saída da equivalência por imagem
 			if (equivalente)
 				std::cout << "SV";
 			else
